@@ -1,12 +1,11 @@
 {
-  "Author": "SuspiciousActivity",
-  "Name": "Waypoints",
-  "Punchline": "Save Waypoints and access them using Wotsit.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "sample",
-    "plugin",
-    "goats"
-  ]
+    "Author": "SuspiciousActivity",
+    "Name": "Waypoints",
+    "Punchline": "Save Waypoints and access them using Wotsit.",
+    "Description": "Save Waypoints and access them using Wotsit.",
+    "ApplicableVersion": "any",
+    "Tags": [
+        "waypoint",
+        "wotsit"
+    ]
 }
