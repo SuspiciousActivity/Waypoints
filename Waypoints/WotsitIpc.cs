@@ -32,10 +32,7 @@ namespace Waypoints
         public void Update()
         {
             _map.Clear();
-            if (!UnregisterAll())
-            {
-                return;
-            }
+            UnregisterAll();
 
             foreach (var kvp in Plugin.Configuration.Waypoints)
             {
