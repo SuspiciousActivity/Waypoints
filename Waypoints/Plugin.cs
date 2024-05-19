@@ -20,7 +20,6 @@ public sealed class Plugin : IDalamudPlugin
         Configuration.Initialize(PluginInterface);
 
         WotsitIpc = new();
-        WotsitIpc.Update();
 
         MainWindow = new();
         WindowSystem.AddWindow(MainWindow);

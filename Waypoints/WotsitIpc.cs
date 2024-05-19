@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Timers;
 using Dalamud.Plugin.Ipc;
 
 namespace Waypoints
 {
     public class WotsitIpc
     {
-        private readonly ICallGateSubscriber<string, string, string, uint, string> _registerWithSearch;
-        private readonly ICallGateSubscriber<string, bool> _invoke;
-        private readonly ICallGateSubscriber<string, bool> _unregisterAll;
+        private ICallGateSubscriber<string, string, string, uint, string> _registerWithSearch;
+        private ICallGateSubscriber<string, bool> _invoke;
+        private ICallGateSubscriber<string, bool> _unregisterAll;
+        private Timer _timer;
 
         private Dictionary<string, (uint, Vector3)> _map = new();
 
@@ -20,6 +22,25 @@ namespace Waypoints
 
             _invoke = Plugin.PluginInterface.GetIpcSubscriber<string, bool>("FA.Invoke");
             _invoke.Subscribe(Invoke);
+            _timer = new Timer(5000);
+            _timer.Elapsed += (sender, e) => RetryInit();
+            if (!Update())
+            {
+                _timer.Start();
+            }
+        }
+
+        private void RetryInit()
+        {
+            _registerWithSearch = Plugin.PluginInterface.GetIpcSubscriber<string, string, string, uint, string>("FA.RegisterWithSearch");
+            _unregisterAll = Plugin.PluginInterface.GetIpcSubscriber<string, bool>("FA.UnregisterAll");
+
+            _invoke = Plugin.PluginInterface.GetIpcSubscriber<string, bool>("FA.Invoke");
+            _invoke.Subscribe(Invoke);
+            if (Update())
+            {
+                _timer.Stop();
+            }
         }
 
         public void Dispose()
@@ -29,10 +50,13 @@ namespace Waypoints
             UnregisterAll();
         }
 
-        public void Update()
+        public bool Update()
         {
             _map.Clear();
-            UnregisterAll();
+            if (!UnregisterAll())
+            {
+                return false;
+            }
 
             foreach (var kvp in Plugin.Configuration.Waypoints)
             {
@@ -45,6 +69,7 @@ namespace Waypoints
 
                 _map.Add(guid, (kvp.Value.Item1, kvp.Value.Item2));
             }
+            return true;
         }
 
         public void Invoke(string guid)
