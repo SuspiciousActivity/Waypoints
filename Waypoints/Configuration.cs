@@ -14,9 +14,9 @@ public class Configuration : IPluginConfiguration
     public Dictionary<string, (uint, Vector3)> Waypoints = new();
 
     [NonSerialized]
-    private DalamudPluginInterface? PluginInterface;
+    private IDalamudPluginInterface? PluginInterface;
 
-    public void Initialize(DalamudPluginInterface pluginInterface)
+    public void Initialize(IDalamudPluginInterface pluginInterface)
     {
         PluginInterface = pluginInterface;
     }
